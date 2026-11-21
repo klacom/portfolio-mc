@@ -1,0 +1,102 @@
+.form {
+  display: grid;
+  gap: 14px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 560px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.label {
+  font: 500 0.9375rem/1.2 var(--font-pixel), monospace;
+  color: #e9e1fb;
+}
+
+.optional {
+  color: var(--soft);
+  font-size: 0.8125rem;
+}
+
+/* Inputs look like inset slots in the stone panel. */
+.field input,
+.field textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 0;
+  background: rgb(8 4 16 / 0.72);
+  color: #fff;
+  font: 400 1rem/1.45 var(--font-body), system-ui, sans-serif;
+  box-shadow:
+    inset 0 0 0 2px rgb(200 140 255 / 0.28),
+    inset 0 3px 0 0 rgb(0 0 0 / 0.45);
+  resize: vertical;
+}
+
+.field textarea {
+  min-height: 132px;
+}
+
+.field input:focus-visible,
+.field textarea:focus-visible {
+  outline: 3px solid var(--focus, #ffd84a);
+  outline-offset: 2px;
+}
+
+.field [aria-invalid="true"] {
+  box-shadow:
+    inset 0 0 0 2px #ff8f84,
+    inset 0 3px 0 0 rgb(0 0 0 / 0.45);
+}
+
+.error {
+  font-size: 0.875rem;
+  color: #ffb3aa;
+}
+
+.trap {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  padding-top: 2px;
+}
+
+.status {
+  flex: 1 1 220px;
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--soft);
+}
+
+.status[data-kind="sent"] {
+  color: #b9f5a0;
+}
+
+.status[data-kind="error"] {
+  color: #ffb3aa;
+}

@@ -1,0 +1,388 @@
+/* ---------- World sections ---------- */
+
+.section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* Underground ceilings hang from the top two rows, with stalactites below them. */
+  padding-top: calc(var(--cell) * 4);
+}
+
+.stage {
+  flex: 1;
+  width: min(100% - 2 * var(--gutter), var(--content));
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--cell) * 0.75);
+}
+
+.ground {
+  flex: none;
+  height: calc(var(--cell) * 4);
+  margin-top: calc(var(--cell) * 3);
+}
+
+.intro {
+  min-height: 100svh;
+  padding-top: calc(80px + var(--cell));
+}
+
+.intro .stage {
+  align-items: center;
+  justify-content: center;
+}
+
+.intro .ground {
+  margin-top: calc(var(--cell) * 2);
+}
+
+.void .ground {
+  margin-top: calc(var(--cell) * 5);
+}
+
+/* Text and panels take pointer input; the empty space between them belongs to the world. */
+.head,
+.heroText,
+.panel {
+  pointer-events: auto;
+}
+
+/* While building, clicks on text and panels reach the world behind them; links and buttons still work. */
+:global(html.is-building) .head,
+:global(html.is-building) .heroText,
+:global(html.is-building) .panel {
+  pointer-events: none;
+}
+
+:global(html.is-building) .section a,
+:global(html.is-building) .section button,
+:global(html.is-building) .section input,
+:global(html.is-building) .section textarea,
+:global(html.is-building) .section label {
+  pointer-events: auto;
+}
+
+/* ---------- Hero ---------- */
+
+.heroText {
+  width: min(100%, 700px);
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.h1 {
+  font-size: clamp(2.6rem, 7vw, 4.75rem);
+  font-weight: 700;
+  text-shadow:
+    4px 4px 0 var(--halo),
+    0 0 12px var(--halo);
+}
+
+.lead {
+  font-size: clamp(1.2rem, 2.4vw, 1.5rem);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 14px;
+  padding-top: 4px;
+}
+
+.introText {
+  max-width: 600px;
+  line-height: 1.7;
+}
+
+/* A word in [brackets] in content text, drawn like the header's Build button. */
+.key {
+  display: inline-block;
+  margin: 0 2px;
+  padding: 1px 8px 0;
+  background: #f4f1e8;
+  color: #1a1622;
+  font: 700 0.875rem/1.45 var(--font-pixel), monospace;
+  text-shadow: none;
+  vertical-align: 1px;
+  box-shadow:
+    0 0 0 2px #1a1622,
+    inset 0 -3px 0 0 #c9c2b0,
+    inset 0 2px 0 0 #fff;
+}
+
+/* ---------- Headings that float on the world ---------- */
+
+.head {
+  display: grid;
+  gap: 10px;
+  max-width: 640px;
+}
+
+.h2 {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: clamp(2rem, 4.5vw, 2.75rem);
+}
+
+.h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.3rem;
+}
+
+.headingIcon {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  image-rendering: pixelated;
+  box-shadow: 0 0 0 3px var(--outline);
+}
+
+.smallIcon {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  image-rendering: pixelated;
+}
+
+/* ---------- Panels: stone tablets that match each biome ---------- */
+
+.panel {
+  --face: rgb(22 24 34 / 0.94);
+  --hi: rgb(255 255 255 / 0.08);
+  --lo: rgb(0 0 0 / 0.35);
+  --soft: #b9bed3;
+  --rule: rgb(255 255 255 / 0.12);
+  --tag: rgb(255 255 255 / 0.08);
+  margin: 4px;
+  padding: clamp(18px, 3vw, 32px);
+  background: var(--face);
+  color: #eef0f8;
+  box-shadow:
+    0 -4px 0 0 var(--outline),
+    0 4px 0 0 var(--outline),
+    -4px 0 0 0 var(--outline),
+    4px 0 0 0 var(--outline),
+    inset 0 4px 0 0 var(--hi),
+    inset 0 -6px 0 0 var(--lo);
+  filter: drop-shadow(8px 8px 0 rgb(0 0 0 / 0.35));
+}
+
+.panel a:not(:global(.pixel-button)) {
+  color: #a8ea83;
+}
+
+.crystal .panel {
+  --face: rgb(28 20 46 / 0.94);
+  --soft: #c9bfe8;
+  --tag: rgb(200 168 248 / 0.12);
+}
+
+.inferno .panel {
+  --face: rgb(36 12 10 / 0.94);
+  --soft: #e3c1b6;
+  --tag: rgb(255 140 80 / 0.12);
+}
+
+.inferno .panel a:not(:global(.pixel-button)) {
+  color: #ffc27a;
+}
+
+.void .panel {
+  --face: rgb(20 12 34 / 0.94);
+  --soft: #cdbfe6;
+  --tag: rgb(200 140 255 / 0.12);
+}
+
+.void .panel a:not(:global(.pixel-button)) {
+  color: #d9b4ff;
+}
+
+.meta {
+  font-size: 0.9375rem;
+  color: var(--soft);
+}
+
+.kicker {
+  font: 500 0.875rem/1.2 var(--font-pixel), monospace;
+  color: var(--soft);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tags li {
+  padding: 2px 8px;
+  background: var(--tag);
+  box-shadow: inset 0 0 0 2px var(--rule);
+  font-size: 0.875rem;
+}
+
+/* ---------- Projects ---------- */
+
+.projectGrid {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: var(--cell);
+  align-items: start;
+}
+
+.project {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.projectBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 8px 10px;
+}
+
+.projectLink {
+  color: #fff !important;
+  text-decoration: none;
+}
+
+.projectLink:hover {
+  text-decoration: underline;
+}
+
+.projectLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin-top: 4px;
+}
+
+.more {
+  font-weight: 700;
+}
+
+/* ---------- Skills ---------- */
+
+.skillsPanel {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 26px 36px;
+}
+
+.skillGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ---------- About ---------- */
+
+/* Three separate tablets standing in the cave, each its own group with its own heading. */
+.aboutGrid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: clamp(28px, 4vw, 52px);
+  align-items: start;
+}
+
+.card {
+  display: grid;
+  gap: 14px;
+  padding: 22px 24px 18px;
+}
+
+/* Extra headroom over the bridge, so the tablets sit higher and the hoglings have room to talk. */
+.inferno .ground {
+  margin-top: calc(var(--cell) * 5);
+}
+
+.entries {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Every entry starts at its own rule, so nothing reads as part of the item before it. */
+.entries li {
+  display: grid;
+  justify-items: start;
+  gap: 3px;
+  padding: 14px 0;
+  border-top: 2px solid var(--rule);
+  font-size: 0.9688rem;
+  line-height: 1.45;
+}
+
+.entries li:first-child {
+  border-top: 0;
+}
+
+.entries b {
+  font-size: 1rem;
+}
+
+.chip {
+  margin-bottom: 2px;
+  padding: 1px 7px 0;
+  background: var(--tag);
+  box-shadow: inset 0 0 0 2px var(--rule);
+  font: 500 0.8125rem/1.5 var(--font-pixel), monospace;
+  color: var(--soft);
+}
+
+/* ---------- Contact ---------- */
+
+.void .stage {
+  align-items: center;
+}
+
+.contactPanel {
+  width: min(100%, 700px);
+  display: grid;
+  gap: 16px;
+}
+
+.contactPanel .actions {
+  justify-content: flex-start;
+}
+
+.elsewhere {
+  display: grid;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 3px solid var(--rule);
+}
+
+.emailLink {
+  overflow-wrap: anywhere;
+  font-weight: 700;
+}
+
+.footer {
+  padding-top: 14px;
+  border-top: 3px solid var(--rule);
+  font-size: 0.875rem;
+  color: var(--soft);
+}

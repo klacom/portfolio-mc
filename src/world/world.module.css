@@ -1,0 +1,514 @@
+/* ---------- The world: two canvases around the page text ---------- */
+
+.stageBack,
+.stageFront {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.stageBack {
+  z-index: 0;
+  background: #7cc0ef;
+}
+
+.stageFront {
+  z-index: 3;
+}
+
+.canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  outline: none;
+  image-rendering: pixelated;
+  will-change: transform;
+}
+
+.stageBack .canvas {
+  pointer-events: auto;
+  touch-action: pan-y;
+}
+
+.canvas[data-building] {
+  cursor: crosshair;
+}
+
+/* Paint mode: a finger drags across cells instead of scrolling. */
+.canvas[data-paint] {
+  touch-action: none;
+}
+
+.label {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9;
+  padding: 2px 8px;
+  background: #1a1622;
+  color: #fff;
+  font: 500 0.8125rem/1.3 var(--font-pixel), monospace;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.label[data-alert="true"] {
+  color: #ff9a8e;
+}
+
+/* ---------- Header toggles ---------- */
+
+.toggle {
+  gap: 8px;
+}
+
+.toggle[aria-pressed="true"] {
+  --face: #2a2638;
+  --hi: #4a4560;
+  --lo: #141220;
+  --fg: #fff;
+}
+
+.skyIcon {
+  width: 18px;
+  height: 18px;
+  display: block;
+  shape-rendering: crispEdges;
+}
+
+/* ---------- Hotbar ---------- */
+
+.toolbar {
+  position: fixed;
+  left: 50%;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 10;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100% - 16px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.status {
+  max-width: 100%;
+  margin: 0;
+  padding: 5px 12px;
+  background: rgb(20 17 30 / 0.9);
+  color: #fff;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  text-align: center;
+  box-shadow: 0 0 0 3px #1a1622;
+}
+
+.status[data-tone="alert"] {
+  color: #ffb3aa;
+}
+
+.warn {
+  color: #ffd98a;
+}
+
+/* Development only: where the build is saved. */
+.projectSave {
+  margin-left: 10px;
+  padding: 0 6px;
+  font: 500 0.75rem/1.6 var(--font-pixel), monospace;
+  color: #b9f5a0;
+  box-shadow: inset 0 0 0 2px rgb(185 245 160 / 0.35);
+}
+
+.projectSave[data-state="error"] {
+  color: #ffb3aa;
+  box-shadow: inset 0 0 0 2px rgb(255 179 170 / 0.4);
+}
+
+.iconOnly {
+  padding-inline: 9px;
+}
+
+.slab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 12px;
+  padding: 10px 12px 12px;
+  background: #39354a;
+  box-shadow:
+    0 -4px 0 0 #1a1622,
+    0 4px 0 0 #1a1622,
+    -4px 0 0 0 #1a1622,
+    4px 0 0 0 #1a1622,
+    inset 3px 3px 0 0 #5b5674,
+    inset -3px -4px 0 0 #221f2e;
+  filter: drop-shadow(6px 6px 0 rgb(0 0 0 / 0.3));
+}
+
+.segment {
+  display: flex;
+}
+
+.segment button {
+  min-height: 40px;
+  padding: 8px 11px 10px;
+  border: 0;
+  color: #d9d6e6;
+  background: #2a2638;
+  font: 500 0.9375rem/1 var(--font-pixel), monospace;
+  box-shadow:
+    inset 2px 2px 0 #4a4560,
+    inset -2px -3px 0 #16141f;
+  cursor: pointer;
+}
+
+.segment button u {
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.segment button[aria-pressed="true"] {
+  color: #fff;
+  background: #43a530;
+  box-shadow:
+    inset 2px 2px 0 #8fe064,
+    inset -2px -3px 0 #256a19;
+  text-shadow: 2px 2px 0 #1f5615;
+}
+
+.slots {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: #24212f;
+}
+
+.slot,
+.invItem {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  padding: 7px;
+  border: 0;
+  background: #8b87a0;
+  box-shadow:
+    inset 3px 3px 0 #5d5975,
+    inset -3px -3px 0 #c4c1d4;
+  cursor: pointer;
+}
+
+.slot[aria-pressed="true"] {
+  z-index: 1;
+  outline: 4px solid #fff;
+  outline-offset: -1px;
+  box-shadow:
+    inset 3px 3px 0 #5d5975,
+    inset -3px -3px 0 #c4c1d4,
+    0 0 0 7px #1a1622;
+}
+
+.icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.action {
+  min-height: 40px;
+  padding: 7px 12px 10px;
+  font-size: 0.9375rem;
+}
+
+.action:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.exit {
+  --face: #43a530;
+  --hi: #8fe064;
+  --lo: #256a19;
+  --fg: #fff;
+}
+
+.danger {
+  --face: #b3362c;
+  --hi: #e0665a;
+  --lo: #7a1f18;
+  --fg: #fff;
+}
+
+.more {
+  position: relative;
+}
+
+.menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 14px);
+  z-index: 2;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  background: #fff;
+  box-shadow:
+    0 -3px 0 0 #1a1622,
+    0 3px 0 0 #1a1622,
+    -3px 0 0 0 #1a1622,
+    3px 0 0 0 #1a1622;
+}
+
+.menu[hidden] {
+  display: none;
+}
+
+.menuItem {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 12px;
+  border: 0;
+  background: transparent;
+  color: #1a1622;
+  font: 500 0.9375rem/1 var(--font-pixel), monospace;
+  text-align: left;
+  cursor: pointer;
+}
+
+.menuItem:hover {
+  background: #eef0f4;
+}
+
+.menuItem span {
+  color: #6b6678;
+}
+
+.menuItem[aria-pressed="true"] span {
+  color: #2c7a1c;
+}
+
+.hints {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 14px;
+  margin: 0;
+  padding: 6px 12px;
+  background: rgb(20 17 30 / 0.85);
+  color: #e6e3f0;
+  font-size: 0.8125rem;
+  box-shadow: 0 0 0 3px #1a1622;
+}
+
+.hints span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hints kbd {
+  padding: 0 5px;
+  background: #e6e3f0;
+  color: #1a1622;
+  font: 500 0.75rem/1.4 var(--font-pixel), monospace;
+}
+
+.mouse {
+  width: 12px;
+  height: 16px;
+  shape-rendering: crispEdges;
+}
+
+.narrow {
+  display: none;
+}
+
+.hints .touchOnlyText,
+.touchOnly {
+  display: none !important;
+}
+
+@media (pointer: coarse) {
+  .hints .mouseOnly {
+    display: none;
+  }
+  .hints .touchOnlyText {
+    display: inline !important;
+  }
+  .touchOnly {
+    display: flex !important;
+  }
+}
+
+/* ---------- Block picker ---------- */
+
+.inventory {
+  width: min(760px, calc(100vw - 24px));
+  max-height: min(52vh, 460px);
+  overflow: auto;
+  padding: 12px 16px 16px;
+  background: #c6c2d6;
+  color: #1a1622;
+  box-shadow:
+    0 -4px 0 0 #1a1622,
+    0 4px 0 0 #1a1622,
+    -4px 0 0 0 #1a1622,
+    4px 0 0 0 #1a1622,
+    inset 3px 3px 0 0 #ece9f5,
+    inset -3px -4px 0 0 #8b87a0;
+}
+
+.invHead {
+  position: sticky;
+  top: -12px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -12px -16px 4px;
+  padding: 10px 16px;
+  background: #c6c2d6;
+  font-size: 0.875rem;
+}
+
+.inventory h3 {
+  margin: 10px 0 6px;
+  font-size: 1rem;
+}
+
+.invGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 44px);
+  gap: 4px;
+}
+
+.invItem {
+  width: 44px;
+  height: 44px;
+  padding: 5px;
+}
+
+.invItem:hover,
+.invItem:focus-visible {
+  background: #a9a5bd;
+}
+
+.invItem[aria-pressed="true"] {
+  outline: 3px solid #fff;
+  outline-offset: -3px;
+}
+
+@media (max-width: 640px) {
+  .slab {
+    gap: 8px 6px;
+    padding: 8px 6px;
+  }
+  .slots {
+    order: 3;
+    gap: 2px;
+    padding: 3px;
+  }
+  .slot {
+    width: 36px;
+    height: 36px;
+    padding: 4px;
+  }
+  .slot[aria-pressed="true"] {
+    box-shadow:
+      inset 3px 3px 0 #5d5975,
+      inset -3px -3px 0 #c4c1d4,
+      0 0 0 4px #1a1622;
+  }
+  .segment button {
+    min-height: 36px;
+    padding: 6px 9px 8px;
+    font-size: 0.875rem;
+  }
+  .action {
+    min-height: 36px;
+    padding: 5px 9px 8px;
+    font-size: 0.875rem;
+  }
+  .actions {
+    order: 4;
+  }
+  .status {
+    font-size: 0.75rem;
+  }
+  /* On phones the status line already says what to do; keep the toolbar short. */
+  .hints {
+    display: none !important;
+  }
+  .wide {
+    display: none;
+  }
+  .narrow {
+    display: inline;
+  }
+  .segment button {
+    min-width: 36px;
+  }
+}
+
+@media (max-width: 400px) {
+  .slot {
+    width: 33px;
+    height: 33px;
+    padding: 3px;
+  }
+  .segment button,
+  .action {
+    padding-inline: 7px;
+    font-size: 0.8125rem;
+  }
+}
+
+/* ---------- Reset dialog ---------- */
+
+.dialog {
+  max-width: min(100% - 32px, 440px);
+  padding: 24px;
+  border: 0;
+  background: #fff;
+  color: #1a1622;
+  box-shadow:
+    0 -4px 0 0 #1a1622,
+    0 4px 0 0 #1a1622,
+    -4px 0 0 0 #1a1622,
+    4px 0 0 0 #1a1622;
+}
+
+.dialog::backdrop {
+  background: rgb(10 8 20 / 0.55);
+}
+
+.dialog h2 {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+}
+
+.dialog p {
+  margin: 0 0 20px;
+}
+
+.dialogActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}

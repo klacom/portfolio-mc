@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" shape-rendering="crispEdges">
+  <title>Klarenz's pixel avatar</title>
+  <desc>An eight-by-eight pixel face with short black hair, tan skin, dark glasses, and blue-tinted lenses.</desc>
+
+  <!-- Every detail follows the same eight-by-eight grid as a skin's face. -->
+  <rect width="8" height="8" fill="#D5A07C"/>
+  <rect x="1" y="2" width="6" height="2" fill="#DDA982"/>
+  <rect x="2" y="2" width="1" height="1" fill="#E1AF87"/>
+  <rect x="3" y="2" width="1" height="1" fill="#E5B68E"/>
+  <rect x="6" y="2" width="1" height="2" fill="#D39B76"/>
+  <rect y="3" width="1" height="4" fill="#C58D68"/>
+  <rect x="7" y="3" width="1" height="4" fill="#BB805F"/>
+  <path d="M1 6h1v1H1Zm5 0h1v1H6Z" fill="#CE956F"/>
+  <rect y="7" width="8" height="1" fill="#C68B64"/>
+  <rect y="7" width="1" height="1" fill="#BB805C"/>
+  <rect x="2" y="7" width="4" height="1" fill="#D19A74"/>
+  <rect x="3" y="7" width="2" height="1" fill="#DDA982"/>
+  <rect x="7" y="7" width="1" height="1" fill="#B97B57"/>
+
+  <!-- Two rows of cropped dark hair, with one-pixel temples. -->
+  <rect width="8" height="2" fill="#242522"/>
+  <path d="M0 0h1v3H0Zm7 0h1v3H7Z" fill="#1D1E1C"/>
+  <path d="M1 0h2v1H1Zm3 0h2v1H4Zm-2 1h2v1H2Z" fill="#30312C"/>
+  <rect x="6" width="1" height="1" fill="#292A26"/>
+
+  <!-- Stepped glasses surround the standard one-row pixel eyes. -->
+  <path d="M1 3h2v1H1Zm4 0h2v1H5ZM0 4h1v1H0Zm3 0h2v1H3Zm4 0h1v1H7Z" fill="#514C40"/>
+  <path d="M1 5h2v1H1Zm4 0h2v1H5Z" fill="#6B6250"/>
+  <path d="M1 4h1v1H1Zm5 0h1v1H6Z" fill="#C5DFDD"/>
+  <path d="M2 4h1v1H2Zm3 0h1v1H5Z" fill="#302B23"/>
+
+  <rect x="3" y="5" width="2" height="1" fill="#BF825F"/>
+  <rect x="4" y="5" width="1" height="1" fill="#B97C59"/>
+  <rect x="3" y="6" width="2" height="1" fill="#A66B58"/>
+</svg>

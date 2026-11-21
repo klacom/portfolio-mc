@@ -1,0 +1,214 @@
+@layer base, components;
+
+@property --ink { syntax: "<color>"; inherits: true; initial-value: #1a1622; }
+@property --halo { syntax: "<color>"; inherits: true; initial-value: rgb(255 255 255 / 0.6); }
+
+:root {
+  --outline: #1a1622;
+  --ink: #1a1622;
+  --ink-soft: #3a3546;
+  --halo: rgb(255 255 255 / 0.6);
+  --shadow: rgb(20 16 40 / 0.3);
+  --accent-text: #2c7a1c;
+  --focus: #1a1622;
+  --cell: 48px;
+  --gutter: 16px;
+  --content: 1120px;
+  color-scheme: light;
+  /* Page text flips in three quick steps, timed by the sky. */
+  transition: --ink 0.25s steps(3), --halo 0.25s steps(3);
+}
+
+/* Over the night sky and in every underground biome, the page text is light. */
+:root[data-sky="night"],
+.dark-zone {
+  --ink: #f2f3fb;
+  --ink-soft: #cfd3ea;
+  --halo: rgb(6 8 28 / 0.78);
+  --accent-text: #9be877;
+  --focus: #ffd84a;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-padding-top: 88px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    margin: 0;
+    min-height: 100svh;
+    font-family: var(--font-body), system-ui, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: var(--ink);
+    background: #0a0812;
+  }
+
+  h1,
+  h2,
+  h3 {
+    margin: 0;
+    font-family: var(--font-pixel), monospace;
+    font-weight: 600;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+
+  p {
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  a {
+    color: var(--accent-text);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 5px;
+  }
+
+  ::selection {
+    background: #c6e6a8;
+    color: #1a1622;
+  }
+}
+
+@layer components {
+  /* Raised block buttons: lit top-left, shaded bottom-right, a hard pixel shadow that presses down. */
+  .pixel-button {
+    --face: #eef0f4;
+    --hi: #ffffff;
+    --lo: #b8bdca;
+    --fg: #1a1622;
+    --ts: transparent;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 46px;
+    margin: 3px;
+    padding: 11px 18px 14px;
+    border: 0;
+    background: var(--face);
+    color: var(--fg);
+    font: 500 1.0625rem/1 var(--font-pixel), monospace;
+    text-decoration: none;
+    text-shadow: 2px 2px 0 var(--ts);
+    cursor: pointer;
+    box-shadow:
+      0 -3px 0 0 var(--outline),
+      0 3px 0 0 var(--outline),
+      -3px 0 0 0 var(--outline),
+      3px 0 0 0 var(--outline),
+      inset 3px 3px 0 0 var(--hi),
+      inset -3px -5px 0 0 var(--lo);
+    filter: drop-shadow(0 5px 0 var(--shadow));
+    transition:
+      transform 90ms steps(2, end),
+      filter 90ms steps(2, end);
+  }
+
+  .pixel-button:hover {
+    transform: translateY(-2px);
+    filter: drop-shadow(0 7px 0 var(--shadow));
+    background: color-mix(in srgb, var(--face), white 12%);
+    color: var(--fg);
+  }
+
+  .pixel-button:active {
+    transform: translateY(3px);
+    filter: drop-shadow(0 1px 0 var(--shadow));
+    box-shadow:
+      0 -3px 0 0 var(--outline),
+      0 3px 0 0 var(--outline),
+      -3px 0 0 0 var(--outline),
+      3px 0 0 0 var(--outline),
+      inset 3px 4px 0 0 var(--lo),
+      inset -3px -2px 0 0 var(--hi);
+  }
+
+  .pixel-button[data-variant="primary"] {
+    --face: #43a530;
+    --hi: #8fe064;
+    --lo: #256a19;
+    --fg: #ffffff;
+    --ts: #1f5615;
+  }
+
+  /* Text that sits straight on the world keeps a soft halo so it reads over sky and terrain. */
+  .on-world {
+    color: var(--ink);
+  }
+
+  .on-world p,
+  .on-world li,
+  .on-world a:not(.pixel-button),
+  .on-world h1,
+  .on-world h2,
+  .on-world h3 {
+    text-shadow:
+      0 0 2px var(--halo),
+      0 0 6px var(--halo),
+      0 0 12px var(--halo);
+  }
+
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .skip-link {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    z-index: 100;
+    transform: translateY(-200%);
+  }
+
+  .skip-link:focus {
+    transform: none;
+  }
+
+  /* Leave room so the last section can scroll clear of the toolbar. */
+  html.is-building body {
+    padding-bottom: 180px;
+  }
+
+  /* Without the canvas, the page still has a sky and ground bands. */
+  html:not(.world-ready) body {
+    background: linear-gradient(#3f97e0, #d4eef9 40%, #0c0e16 41%, #1a0503 80%, #030206);
+  }
+
+  html:not(.world-ready) [data-world-ground] {
+    background: linear-gradient(#53a83a 0 calc(var(--cell) / 4), #82573a 0 70%, #4b4d57 0);
+  }
+}
