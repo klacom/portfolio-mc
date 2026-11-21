@@ -132,6 +132,7 @@ Drafts never appear on the site. If Sanity can't be reached during a build, the 
 ## Deploy on Vercel
 
 1. Push the repository to GitHub and import it in Vercel (framework preset: Next.js).
+   The repository's `vercel.json` explicitly selects Next.js and its default output directory. Keep the Root Directory at the repository root. The "Other" preset serves only `public/`, which makes the home page and API routes return 404 even when the build succeeds.
 2. Add the environment variables from `.env.example` in **Project → Settings → Environment Variables**.
 3. Create a deploy hook in **Settings → Git → Deploy Hooks** (branch `main`). Keep the URL private: anyone with it can trigger builds.
 4. In Sanity's **API → Webhooks**, add a webhook that POSTs to that deploy hook URL on create, update, and delete for the `profile`, `project`, `skillGroup`, and `exploration` types, with the filter `!(_id in path("drafts.**"))`.
