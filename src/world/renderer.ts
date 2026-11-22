@@ -130,6 +130,7 @@ export class WorldEngine {
   private bh = 1;
   private scrollTex = 0;
   private raf = 0;
+  private destroyed = false;
   private wantFrame = false;
   private lastFrame = 0;
   private lastStep = 0;
@@ -141,6 +142,7 @@ export class WorldEngine {
   private cursor: CellRef | null = null;
   private focused = false;
   private flashUntil = 0;
+  private flashTimer = 0;
   private glowCache = new Map<string, HTMLCanvasElement>();
   private plantSheets = new Map<Biome, { canvas: HTMLCanvasElement; rows: Map<DecorKind, number> }>();
   private leafSprite: HTMLCanvasElement | null = null;
@@ -183,8 +185,11 @@ export class WorldEngine {
   }
 
   destroy() {
+    this.destroyed = true;
     this.unsubscribe();
+    window.clearTimeout(this.flashTimer);
     if (this.raf) cancelAnimationFrame(this.raf);
+    this.raf = 0;
   }
 
   setOptions(next: Partial<EngineOptions>) {
@@ -379,7 +384,10 @@ export class WorldEngine {
   /** Particles after an action: chips of the block's own pixels, or a puff of dust. */
   feedback(result: ActionResult) {
     if (result.kind === "taken" || result.kind === "limit") {
+      // One redraw now shows the red outline and one when it ends clears it; nothing needs drawing between.
       this.flashUntil = performance.now() + 400;
+      window.clearTimeout(this.flashTimer);
+      this.flashTimer = window.setTimeout(() => this.request(), 410);
       this.request();
       return;
     }
@@ -410,9 +418,19 @@ export class WorldEngine {
     return scrollDev - Math.floor(scrollDev / this.T) * this.T;
   }
 
+  /** Asks for a redraw on the next screen refresh. */
   request() {
     this.wantFrame = true;
-    if (!this.raf) this.raf = requestAnimationFrame(this.loop);
+    this.schedule();
+  }
+
+  /**
+   * The one place a frame is scheduled, so there is only ever one loop. (Creature effects ask for frames while
+   * a frame is being drawn; when the loop also scheduled its own next frame, each of those started a second
+   * loop that never stopped, and every forced redraw then ran once per loop.)
+   */
+  private schedule() {
+    if (!this.raf && !this.destroyed) this.raf = requestAnimationFrame(this.loop);
   }
 
   private animating() {
@@ -434,7 +452,7 @@ export class WorldEngine {
       if (!this.low && this.frameCost > 14) this.low = true;
       this.lastFrame = now;
     }
-    if (animate || this.wantFrame) this.raf = requestAnimationFrame(this.loop);
+    if (animate || this.wantFrame) this.schedule();
   };
 
   resume() {
@@ -1983,6 +2001,5 @@ export class WorldEngine {
     const text = status === "outside" ? "Out of reach" : taken ? `${name} taken` : name;
     const rect = this.cellRect(target)!;
     this.onLabel({ text, x: (rect.left + rect.right) / 2, y: rect.top, alert: alert || taken });
-    if (now < this.flashUntil) this.wantFrame = true;
   }
 }

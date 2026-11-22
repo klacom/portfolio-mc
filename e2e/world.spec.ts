@@ -246,6 +246,36 @@ test("turning sound on downloads the sound effects and plays the toggle's click"
   expect(sounds.every((s) => s.status === 200 && /\.(ogg|wav)$/.test(s.url))).toBe(true);
 });
 
+test("a blocked placement doesn't make the world redraw faster than the screen refreshes", async ({ page, isMobile }) => {
+  test.skip(isMobile, "Right-clicking is checked on desktop.");
+  // Count world frames: each one starts by clearing the on-screen front canvas.
+  await page.addInitScript(() => {
+    const w = window as Window & { __frames?: number[] };
+    w.__frames = [];
+    const clear = CanvasRenderingContext2D.prototype.clearRect;
+    CanvasRenderingContext2D.prototype.clearRect = function (...args: Parameters<typeof clear>) {
+      if (this.canvas.isConnected && args[0] === 0 && args[1] === 0) w.__frames!.push(performance.now());
+      return clear.apply(this, args);
+    };
+  });
+  await page.reload();
+  await expect(page.locator("html")).toHaveClass(/world-ready/);
+  // Fairies sparkle all the time; give their effects a few seconds to run, as a visitor would.
+  await centreOn(page, "skills", 0);
+  await page.waitForTimeout(4000);
+  await page.getByRole("button", { name: "Build" }).click();
+  const p = await cellCenter(page, "skills", 3, 0);
+  await page.mouse.move(p.x, p.y);
+  await expect(page.getByText("Middle taken", { exact: true })).toBeVisible();
+  const clicked = await page.evaluate(() => performance.now());
+  await page.mouse.click(p.x, p.y, { button: "right" });
+  await expect(page.locator("[data-world-status]")).toContainText("taken here");
+  await page.waitForTimeout(500);
+  const frames = await page.evaluate((from) => (window as Window & { __frames?: number[] }).__frames!.filter((t) => t >= from && t < from + 400).length, clicked);
+  // The red flash lasts 400 ms: one loop at 60 Hz draws at most about 24 frames in that time.
+  expect(frames).toBeLessThanOrEqual(30);
+});
+
 test("the pause button stops the world's animation", async ({ page }) => {
   await page.getByRole("button", { name: "Pause animations" }).click();
   await expect(page.getByRole("button", { name: "Play animations" })).toBeVisible();
